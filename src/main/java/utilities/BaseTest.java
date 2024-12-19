@@ -3,23 +3,21 @@ package utilities;
 import com.microsoft.playwright.*;
 import com.aventstack.extentreports.*;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
 import pages.LoginPage;
 
 import java.io.File;
 import java.nio.file.Paths;
 
 public class BaseTest {
-    protected static Playwright playwright;
-    protected static Browser browser;
-    protected static BrowserContext context;
-    protected static Page page;
-    protected static ExtentReports extent;
-    protected static ExtentTest test;
+    public static Playwright playwright;
+    public static Browser browser;
+    public static BrowserContext context;
+    public static Page page;
+    public static ExtentReports extent;
+    public static ExtentTest test;
 
-    @Before
-    public void setup() {
+    public static void initializePlaywrightAndReports() {
+        // Initialize Playwright
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
         context = browser.newContext();
@@ -33,20 +31,25 @@ public class BaseTest {
         }
 
         test = extent.createTest("Test Initialization");
+    }
 
-        // Call LoginPage and perform login
+    public static void login() {
         LoginPage loginPage = new LoginPage(page, test);
         loginPage.loginToApplication();
     }
 
-    @After
-    public void teardown() {
-        extent.flush();
-        browser.close();
-        playwright.close();
+    public static void tearDown() {
+        if (extent != null) {
+            extent.flush();
+        }
+        if (browser != null) {
+            browser.close();
+        }
+        if (playwright != null) {
+            playwright.close();
+        }
     }
 
-    // Static takeScreenshot method
     public static void takeScreenshot(Page page, String stepName) {
         String directory = "screenshots";
         String path = directory + "/" + stepName + ".png";
