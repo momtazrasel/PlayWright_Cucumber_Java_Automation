@@ -16,6 +16,7 @@ public class LoginPage {
 
     public void loginToApplication() {
         page.navigate("https://bracuerp-qa.apsissolutions.com/signin");
+        BaseTest.takeScreenshot(page, "login_success");
         page.fill(LoginObject.USERNAME_INPUT, "admin");
         page.fill(LoginObject.PASSWORD_INPUT, "password123");
         page.click(LoginObject.LOGIN_BUTTON);
